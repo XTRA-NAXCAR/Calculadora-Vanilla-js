@@ -1,42 +1,24 @@
-import {operar} from './Operar.js';
-function init() {
-    del.addEventListener('click', borrar1, true);
-    C.addEventListener('click', borrar, true);
-    multiplicacion.addEventListener('click', multi, true);
-    divicion.addEventListener('click', div, true);
-    sumar.addEventListener('click',sum,true);
-    resta.addEventListener('click',rest,true);
-    salir_b.addEventListener('click' , salir, true)
-    resul.addEventListener('click' , res, true)
-}
+import { signos, resultado } from './Operaciones.js';
+import { borrar } from './Borrar.js';
 
 const operacion = document.getElementById('js-valor_anterior');
-const resultado = document.getElementById('js-valor_actual');
-const botones_numeros = document.querySelectorAll('.js-numero');
+const resultadoDisplay = document.getElementById('js-valor_actual');
 
-var multiplicacion = document.getElementById('js-multiplicacion');
-var divicion = document.getElementById('js-divicion');
-var sumar = document.getElementById('js-sumar');
-var resta = document.getElementById('js-resta');
-var resul = document.getElementById('js-resultado');
-var porcentaje = document.getElementById('js-porcentaje');
-var salir_b = document.getElementById ('js-salir');
+const botonesNumeros = document.querySelectorAll('.js-numero');
+const botonesOperaciones = document.querySelectorAll('.js-operacion');
+const resultadoBoton = document.getElementById('js-resultado');
+const salirBoton = document.getElementById ('js-salir');
+const delBoton = document.getElementById('js-DEL');
+const cBoton = document.getElementById('js-C');
 
-var del = document.getElementById('js-DEL');
-var C = document.getElementById('js-C');
+var op_0 = '', op_1 = '', opi= '', opi_2= '', operacion_tpm= '', def = 0, resultado_a = 0;
 
-
-
-
-var op_0 = '';
-var op_1 = '';
-var opi = '';
-var opi_2 = '';
-var operacion_tpm = '';
-var def = 0;
-var resultado_a = 0;
-
-function ingresar_validar_numero(op, numero) { 
+/**
+ * @param {String} op Variable que guarda los valores ingresados
+ * @param {String} numero Variable a guardar el textContent de los botones (Numeros)
+ * @returns {String} Retorna la concatenación de los numeros ingresados, excepto dos veces '.'
+ */
+function ingresarValidarNumero(op, numero) { 
     if(op.includes('.') && numero === '.'){                        
         return '';
     }else{
@@ -44,9 +26,11 @@ function ingresar_validar_numero(op, numero) {
     }
 }   
 
-
-function validar_operacion() { 
-    if(op_0 && !operacion_tpm){       
+/**
+ * Cambia el textContent del Display de la calculadora, según los valores ingresados.
+ */
+function validarOperacion() { 
+    if(op_0 && !operacion_tpm){ 
         operacion_tpm = operacion.textContent;
         operacion.textContent = operacion.textContent + op_1;  
     } else if(op_0 && operacion_tpm){ 
@@ -56,38 +40,22 @@ function validar_operacion() {
     }
 }
 
-botones_numeros.forEach(boton => {
+/**
+ * Asigna y concatena el textContent de los numeros a 'op_1'
+ */
+botonesNumeros.forEach(boton => {
     boton.addEventListener('click', ()=> {  
-        op_1 = op_1 + ingresar_validar_numero(op_1, boton.innerText);
-        validar_operacion();     
+        op_1 = op_1 + ingresarValidarNumero(op_1, boton.innerText);
+        validarOperacion();     
     });
 });
 
 
 
-
-function borrar1()
-{
-    if (op_0 && !opi && !op_1) {
-        op_0 = op_0.slice(0,-1);
-        operacion.textContent = operacion.textContent.slice(0,-1);
-    }
-    if (op_0 && opi && !op_1) {
-        opi = opi.slice(0,-3);
-        operacion.textContent = operacion.textContent.slice(0,-3);
-    }
-    if (op_0 && opi && op_1) {
-        op_1 = op_1.slice(0,-1);
-        operacion.textContent = operacion.textContent.slice(0,-1);
-    }
-    if (op_1 && !opi && !op_0) {
-        op_1 = op_1.slice(0,-1);
-        operacion.textContent = operacion.textContent.slice(0,-1);
-    }
-}
-
-
-function borrar(){
+/**
+ * Resetea todas las variables a un String vació.
+ */
+function borrarTodo(){
     op_1 = '';
     op_0 = '';
     opi = '';
@@ -96,147 +64,86 @@ function borrar(){
     def = 0;
     resultado_a = 0;
     operacion.textContent = '';
-    resultado.textContent = '';
+    resultadoDisplay.textContent = '';
 }
-
-function multi(){
-    if (op_0 && op_1) {
-        operacion.textContent = operar(resultado_a, op_0, op_1, opi, opi_2);  
-        op_1 = operacion.textContent; 
-        op_0 = '';
-        operacion_tpm = '';
-        opi = opi_2;
-        opi_2 = '';
-        multi();
-    } else if (!operacion.textContent.includes('*')) {
-        opi = ' * ';
-        opi_2 = ' * '; 
-        if (operacion.textContent.includes ('/') || operacion.textContent.includes ('+') || operacion.textContent.includes ('-')) {
-            operacion.textContent = operacion.textContent.slice(0,-3);
-        }
-        operacion.textContent = operacion.textContent + opi;
-        op_0 = operacion.textContent;
-        op_1 = '';
-    } else {
-        swal({
-            title: 'Ya has seleccionado la Multiplicación más de una vez seguida, podrias seleccionar otras operaciones como:',
-            text: 'Divición, Suma o Resta :)',
-            icon: 'error'
-        });
-    }
-}
-
 
 /**
- * Description:
- * variable: opi - {Type}, descripcion
- * params: param_1 - {Type}, description:
- * return: resultado - {Type}, description:
+ * Envia al usuario a 'www.google.com'
  */
-function div() {
-    if (op_0 && op_1) {
-        operacion.textContent = operar(resultado_a, op_0, op_1, opi, opi_2);  
-        opi = opi_2;
-        opi_2 = '';
-        op_1 = operacion.textContent; 
-        op_0 = '';
-        operacion_tpm = '';
-        div();
-    } else if (!operacion.textContent.includes('/')) {
-        opi = ' / ';
-        opi_2 = ' / ';
-        if (operacion.textContent.includes ('*') || operacion.textContent.includes ('+') || operacion.textContent.includes ('-')) {
-            operacion.textContent = operacion.textContent.slice(0,-3);
-        }
-        operacion.textContent = operacion.textContent + opi;
-        op_0 = operacion.textContent;
-        op_1 = '';
-    } else {
-        swal({
-            title: 'Ya has seleccionado la Divición más de una vez seguida, podrias seleccionar otras operaciones como:',
-            text: 'Multiplicación, Suma o Resta :)',
-            icon: 'error'
-        });
-    }
-}
-
-
-function sum(){
-    if (op_0 && op_1) {
-        opi_2 = '';
-        operacion.textContent = operar(resultado_a, op_0, op_1, opi, opi_2);  
-        opi = opi_2;
-        opi_2 = '';
-        op_1 = operacion.textContent; 
-        op_0 = '';
-        operacion_tpm = '';
-        sum(); 
-    } else if (!operacion.textContent.includes('+')) {
-        opi = ' + ';
-        opi_2 = ' + ';
-        if (operacion.textContent.includes ('*') || operacion.textContent.includes ('/') || operacion.textContent.includes ('-')) {
-            operacion.textContent = operacion.textContent.slice(0,-3);
-        }
-        operacion.textContent = operacion.textContent + opi;
-        op_0 = operacion.textContent;
-        op_1 = '';
-    } else {
-        swal({
-            title: 'Ya has seleccionado la Suma más de una vez seguida, podrias seleccionar otras operaciones como:',
-            text: 'Multiplicación, Divición o Resta :)',
-            icon: 'error'
-        });
-    }
-}
-
-
-function rest(){
-    if (op_0 && op_1) {
-        opi_2 = '';
-        operacion.textContent = operar(resultado_a, op_0, op_1, opi, opi_2);  
-        opi = opi_2;
-        opi_2 = '';
-        op_1 = operacion.textContent; 
-        op_0 = '';
-        operacion_tpm = '';
-        rest();   
-    } else if (!operacion.textContent.includes('-')) {
-        opi = ' - ';
-        opi_2 = ' - ';
-        if (operacion.textContent.includes ('*') || operacion.textContent.includes ('/') || operacion.textContent.includes ('+')) {
-            operacion.textContent = operacion.textContent.slice(0,-3);
-        }
-        operacion.textContent = operacion.textContent + opi;
-        op_0 = operacion.textContent;
-        op_1 = '';
-    } else {
-        swal({
-            title: 'Ya has seleccionado la Resta más de una vez seguida, podrias seleccionar otras operaciones como:',
-            text: 'Multiplicación, Divición o Suma :)',
-            icon: 'error'
-        });
-    }
-}
-
-
-function res (){
-    resultado_a = 1;
-    if (!operacion.textContent.includes('*') && !operacion.textContent.includes('/') && !operacion.textContent.includes('+') && !operacion.textContent.includes('-')) {
-        def = op_1;
-    }
-    if (operacion.textContent.includes('*') || operacion.textContent.includes('/') || operacion.textContent.includes('+') || operacion.textContent.includes('-')){
-        def = operar(resultado_a, op_0, op_1, opi, opi_2);
-    }
-    resultado.textContent = ' = ' + def
-    operacion_tpm = '';
-    op_0 = '';
-    op_1 = '';
-}
-
 function salir() {
     location.href = "https://www.google.com/?hl=es&safe=active&ssui=on"
 }
 
+/**
+ * Función que inicia todos los eventos de escucha
+ */
+function init() {
+    salirBoton.addEventListener('click' , salir, true);
+    cBoton.addEventListener('click', borrarTodo,true)
 
+    delBoton.addEventListener('click',() =>{
+            let operacionTextContent = operacion.textContent;
+            ( { operacionTextContent,
+                op_1 } = 
+                borrar(op_0, 
+                    op_1, 
+                    opi,
+                    operacion.textContent) );
+                    operacion.textContent = operacionTextContent;
+                }, 
+    true);
+
+    var signo = '';
+    botonesOperaciones.forEach(botonOperacion => {
+        botonOperacion.addEventListener('click', 
+        () => {
+            let operacionTextContent = operacion.textContent; 
+            signo = botonOperacion.value;
+            ( {  operacionTextContent, 
+                 op_0, 
+                 op_1, 
+                 operacion_tpm, 
+                 opi, 
+                 opi_2, 
+                 resultado_a } = 
+            signos(operacion.textContent, 
+                  op_0, 
+                  op_1, 
+                  operacion_tpm, 
+                  opi, 
+                  opi_2, 
+                  resultado_a,
+                  signo) );
+            operacion.textContent = operacionTextContent;
+        }, 
+        true);
+    });
+     
+
+    
+    resultadoBoton.addEventListener('click' ,
+                            () => {
+                                let resultadoDisplayTextContent = resultadoDisplay.textContent;
+                                ({
+                                    resultado_a,
+                                    resultadoDisplayTextContent, 
+                                    op_0, 
+                                    op_1, 
+                                    def, 
+                                    operacion_tpm, 
+                                    resultadoDisplayTextContent
+                                } = resultado(resultado_a,
+                                    operacion.textContent, 
+                                    op_0, 
+                                    op_1, 
+                                    def, 
+                                    operacion_tpm, 
+                                    resultadoDisplayTextContent, 
+                                    opi,
+                                    opi_2) );
+                                resultadoDisplay.textContent = resultadoDisplayTextContent; 
+                                }, 
+                                true);
+}
 
 init();
